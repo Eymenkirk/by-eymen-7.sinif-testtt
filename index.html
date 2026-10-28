@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7. Sınıf Test ve Sınav Merkezi</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        turkce: { DEFAULT: '#FF6B6B', dark: '#E05656' },
+                        matematik: { DEFAULT: '#4ECDC4', dark: '#3B9B94' },
+                        fen: { DEFAULT: '#45B7D1', dark: '#338CA0' },
+                        sosyal: { DEFAULT: '#FFA07A', dark: '#D9825F' },
+                        ingilizce: { DEFAULT: '#A06CD5', dark: '#7E4FAF' },
+                        din: { DEFAULT: '#2ECC71', dark: '#25A25A' }
+                    },
+                    fontFamily: {
+                        sans: ['Fredoka', 'Quicksand', 'Segoe UI', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Fredoka', 'Quicksand', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        .bounce-in {
+            animation: bounceIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .dark .glass {
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="bg-indigo-50/40 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- TOP HEADER / NAVBAR -->
+    <header class="sticky top-0 z-40 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border-b-4 border-indigo-500 dark:border-indigo-600 shadow-md transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Logo / Home Link -->
+            <button onclick="navToDashboard()" class="flex items-center gap-3 group text-left">
+                <div class="bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 text-white p-2.5 rounded-2xl shadow-lg group-hover:scale-105 transition-transform duration-200">
+                    <i class="fa-solid fa-graduation-cap text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        7. Sınıf Test Odası
+                    </h1>
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:block">LGS Hazırlık & MEB Müfredat Portalı</p>
+                </div>
+            </button>
+
+            <!-- Global Controls -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button id="soundToggleBtn" onclick="toggleSound()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-indigo-100 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 transition-all">
+                    <i id="soundIcon" class="fa-solid fa-volume-high text-lg"></i>
+                </button>
+                <button id="themeToggleBtn" onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-indigo-100 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 transition-all">
+                    <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-6xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center">
+
+        <!-- 1. DASHBOARD VIEW (Ders ve Sınav Seçimi) -->
+        <section id="dashboardView" class="space-y-8">
+            <!-- Welcome Banner -->
+            <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 opacity-20 text-white text-9xl font-black pointer-events-none">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div class="relative z-10 max-w-xl">
+                    <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm">7. Sınıf Seviyesi 🔥</span>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold mt-2 mb-3 leading-tight">LGS Yolunda Kendini Test Et!</h2>
+                    <p class="text-indigo-100 text-sm sm:text-base font-medium">Fen, Matematik ve Türkçe derslerinde 20 soru; Sosyal, İngilizce ve Din Kültürü derslerinde 10 özgün soru!</p>
+                </div>
+            </div>
+
+            <!-- Quiz Setup Options -->
+            <div class="glass rounded-2xl p-5 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <div class="bg-indigo-500/10 dark:bg-indigo-400/10 p-3 rounded-xl text-indigo-500">
+                        <i class="fa-solid fa-sliders text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 dark:text-slate-200">Sınav Modu ve Zorluk</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">7. Sınıf kazanımlarına uygun zorluk seviyesi</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-center gap-3 w-full md:w-auto">
+                    <!-- Difficulty Selector -->
+                    <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+                        <button id="btnDiffKolay" onclick="setDifficulty('kolay')" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-all">Kolay</button>
+                        <button id="btnDiffOrta" onclick="setDifficulty('orta')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all bg-indigo-600 text-white shadow-sm">Orta</button>
+                        <button id="btnDiffZor" onclick="setDifficulty('zor')" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-all">Zor (LGS)</button>
+                        <button id="btnDiffCokZor" onclick="setDifficulty('cokzor')" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-all">Derece</button>
+                    </div>
+
+                    <!-- Timer Toggle -->
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        <input type="checkbox" id="timerToggle" checked class="w-4 h-4 accent-indigo-600 rounded">
+                        <span><i class="fa-solid fa-stopwatch text-indigo-500"></i> Süreli Çözüm</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Subject Cards Grid -->
+            <div>
+                <h3 class="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-indigo-500"></i> 7. Sınıf Sınav Merkezimiz (Ders Sınavları)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="subjectsGrid">
+                    <!-- Subject cards injected by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. ACTIVE QUIZ VIEW (Sınav Ekranı) -->
+        <section id="quizView" class="hidden space-y-6">
+            <!-- Quiz Header -->
+            <div class="glass rounded-2xl p-4 shadow-md border border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div id="quizSubjectIcon" class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md">
+                        <i class="fa-solid fa-book"></i>
+                    </div>
+                    <div>
+                        <h2 id="quizSubjectTitle" class="font-bold text-lg leading-tight">Ders Adı</h2>
+                        <span id="quizQuestionCounter" class="text-xs font-semibold text-slate-500 dark:text-slate-400">Soru 1 / 20</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 sm:gap-4 ml-auto">
+                    <div id="timerContainer" class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <i class="fa-solid fa-clock text-indigo-500 animate-pulse"></i>
+                        <span id="timerDisplay" class="font-mono font-bold text-slate-700 dark:text-slate-200 text-sm">00:00</span>
+                    </div>
+
+                    <div class="flex items-center gap-2 bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 px-3 py-1.5 rounded-xl font-bold text-sm">
+                        <i class="fa-solid fa-star text-amber-400"></i>
+                        <span id="liveScoreDisplay">0 Puan</span>
+                    </div>
+
+                    <button onclick="confirmExitQuiz()" class="text-slate-400 hover:text-red-500 p-2 rounded-lg transition-colors">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 overflow-hidden p-0.5 shadow-inner">
+                <div id="progressBar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full transition-all duration-300 w-0"></div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-100 dark:border-slate-700/80 space-y-6 relative">
+                <div class="space-y-2">
+                    <span id="questionCategoryTag" class="inline-block bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 text-xs font-bold px-3 py-1 rounded-md">
+                        7. Sınıf Soru
+                    </span>
+                    <h3 id="questionText" class="text-lg sm:text-xl font-bold leading-relaxed text-slate-800 dark:text-slate-100">
+                        Soru metni yükleniyor...
+                    </h3>
+                </div>
+
+                <!-- Answer Options -->
+                <div id="optionsContainer" class="grid grid-cols-1 gap-3 sm:gap-4 pt-2"></div>
+
+                <!-- Feedback Banner -->
+                <div id="feedbackBanner" class="hidden rounded-2xl p-4 flex items-center justify-between transition-all duration-200">
+                    <div class="flex items-start gap-3">
+                        <i id="feedbackIcon" class="text-2xl mt-0.5"></i>
+                        <div>
+                            <p id="feedbackTitle" class="font-bold text-sm sm:text-base"></p>
+                            <p id="feedbackDetail" class="text-xs sm:text-sm opacity-90 mt-1"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex items-center justify-between gap-4 pt-2">
+                <button id="prevBtn" onclick="prevQuestion()" class="px-5 py-2.5 rounded-xl font-bold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                    <i class="fa-solid fa-arrow-left mr-2"></i> Önceki
+                </button>
+
+                <button id="nextBtn" onclick="nextQuestion()" class="px-6 py-2.5 rounded-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/20 transition-all flex items-center gap-2">
+                    <span id="nextBtnText">Sonraki</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- 3. RESULTS SUMMARY VIEW (Sonuç Ekranı) -->
+        <section id="resultsView" class="hidden space-y-6 bounce-in">
+            <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 text-center shadow-xl border border-slate-100 dark:border-slate-700 space-y-4">
+                <div class="inline-flex justify-center items-center w-20 h-20 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-500 mb-2">
+                    <i id="resultTrophyIcon" class="fa-solid fa-trophy text-4xl"></i>
+                </div>
+                <h2 id="resultTitle" class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-slate-100">
+                    Tebrikler! Testi Tamamladın 🎉
+                </h2>
+                <p id="resultSubtitle" class="text-slate-500 dark:text-slate-400 text-sm sm:text-base">
+                    7. Sınıf müfredatı sorularıyla harika bir pratik yaptın!
+                </p>
+
+                <div id="starRating" class="flex justify-center gap-2 text-3xl text-amber-400 my-3"></div>
+
+                <div class="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black text-3xl sm:text-4xl px-8 py-3 rounded-2xl shadow-lg">
+                    <span id="finalScoreDisplay">0</span> <span class="text-lg font-bold text-indigo-200">/ 100 Puan</span>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 p-4 rounded-2xl text-center">
+                    <i class="fa-solid fa-circle-check text-emerald-500 text-2xl mb-1"></i>
+                    <div id="resCorrect" class="text-2xl font-black text-emerald-600 dark:text-emerald-400">0</div>
+                    <div class="text-xs font-semibold text-emerald-700 dark:text-emerald-300">Doğru Cevap</div>
+                </div>
+
+                <div class="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 p-4 rounded-2xl text-center">
+                    <i class="fa-solid fa-circle-xmark text-rose-500 text-2xl mb-1"></i>
+                    <div id="resWrong" class="text-2xl font-black text-rose-600 dark:text-rose-400">0</div>
+                    <div class="text-xs font-semibold text-rose-700 dark:text-rose-300">Yanlış Cevap</div>
+                </div>
+
+                <div class="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 p-4 rounded-2xl text-center">
+                    <i class="fa-solid fa-circle-minus text-amber-500 text-2xl mb-1"></i>
+                    <div id="resEmpty" class="text-2xl font-black text-amber-600 dark:text-amber-400">0</div>
+                    <div class="text-xs font-semibold text-amber-700 dark:text-amber-300">Boş Bırakılan</div>
+                </div>
+
+                <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 p-4 rounded-2xl text-center">
+                    <i class="fa-solid fa-hourglass-half text-blue-500 text-2xl mb-1"></i>
+                    <div id="resTime" class="text-2xl font-black text-blue-600 dark:text-blue-400">00:00</div>
+                    <div class="text-xs font-semibold text-blue-700 dark:text-blue-300">Toplam Süre</div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center pt-2">
+                <button onclick="retakeQuiz()" class="px-6 py-3 rounded-2xl font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Testi Tekrar Çöz
+                </button>
+                <button onclick="toggleReviewModal()" class="px-6 py-3 rounded-2xl font-bold bg-slate-700 hover:bg-slate-800 text-white shadow-lg transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-list-check"></i> Cevapları İncele
+                </button>
+                <button onclick="navToDashboard()" class="px-6 py-3 rounded-2xl font-bold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-house"></i> Ana Sayfaya Dön
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ANSWERS REVIEW MODAL -->
+    <div id="reviewModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
+                <h3 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-check text-indigo-500"></i> Soru Cevap Analizi
+                </h3>
+                <button onclick="toggleReviewModal()" class="text-slate-400 hover:text-red-500 p-2 rounded-lg">
+                    <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+            </div>
+
+            <div id="reviewListContainer" class="p-6 overflow-y-auto space-y-6 flex-grow"></div>
+
+            <div class="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
+                <button onclick="toggleReviewModal()" class="px-5 py-2 rounded-xl bg-slate-700 text-white font-bold hover:bg-slate-800 transition-all">
+                    Kapat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="mt-auto py-4 text-center text-xs font-semibold text-slate-400 border-t border-slate-200 dark:border-slate-800">
+        <p>7. Sınıf MEB Müfredatına Uygun Test ve LGS Hazırlık Portalı • 2026</p>
+    </footer>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        // Web Audio Synthesizer
+        const AudioFX = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            },
+            playClick() {
+                if (!state.soundEnabled) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(300, this.ctx.currentTime + 0.05);
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.05);
+            },
+            playCorrect() {
+                if (!state.soundEnabled) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, this.ctx.currentTime); 
+                osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.1); 
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.25);
+            },
+            playWrong() {
+                if (!state.soundEnabled) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+                osc.frequency.setValueAtTime(180, this.ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.25);
+            }
+        };
+
+        // Unique Questions Generator without Repetition
+        function generateUniqueQuestions(subject, difficulty, count) {
+            const mult = { 'kolay': 1, 'orta': 2, 'zor': 3, 'cokzor': 4 }[difficulty] || 2;
+            const questions = [];
+
+            if (subject === 'matematik') {
+                for (let i = 1; i <= count; i++) {
+                    const type = (i - 1) % 6;
+                    if (type === 0) { // Tam sayılar
+                        const a = -1 * (i * 2 + mult);
+                        const b = (i + mult * 3);
+                        const c = -1 * (i * 3);
+                        const ans = a * b + c;
+                        questions.push({
+                            question: `(${a}) · (${b}) + (${c}) işleminin sonucu kaçtır?`,
+                            options: [`a) ${ans}`, `b) ${ans + 12}`, `c) ${ans - 8}`, `d) ${ans * -1}`],
+                            correct: 0,
+                            explanation: `İşlem sırasına göre önce çarpma yapılır: (${a}) · (${b}) = ${a * b}. Sonra (${c}) eklenir: ${ans}.`
+                        });
+                    } else if (type === 1) { // Rasyonel Sayılar
+                        const pay = i + 2;
+                        const payda = i + 5;
+                        const k = mult + 1;
+                        const ansPay = pay * k;
+                        const ansPayda = payda * k;
+                        questions.push({
+                            question: `${pay}/${payda} rasyonel sayısının ${k} ile genişletilmiş hali aşağıdakilerden hangisidir?`,
+                            options: [`a) ${ansPay}/${ansPayda}`, `b) ${pay + k}/${payda + k}`, `c) ${ansPay}/${payda}`, `d) ${pay}/${ansPayda}`],
+                            correct: 0,
+                            explanation: `Rasyonel sayı genişletilirken hem pay hem payda ${k} ile çarpılır.`
+                        });
+                    } else if (type === 2) { // Cebirsel İfadeler
+                        const c1 = i + 2;
+                        const c2 = mult + 3;
+                        const k1 = i * 4;
+                        const k2 = 5;
+                        questions.push({
+                            question: `(${c1}x + ${k1}) + (${c2}x - ${k2}) cebirsel ifadesinin en sade hali nedir?`,
+                            options: [`a) ${c1 + c2}x + ${k1 - k2}`, `b) ${c1 + c2}x + ${k1 + k2}`, `c) ${c1}x + ${k1 - k2}`, `d) ${c2}x - ${k2}`],
+                            correct: 0,
+                            explanation: `Benzer terimler toplanır: (${c1}x + ${c2}x) = ${c1 + c2}x ve (${k1} - ${k2}) = ${k1 - k2}.`
+                        });
+                    } else if (type === 3) { // Denklemler
+                        const xVal = i + mult * 2;
+                        const coeff = mult + 2;
+                        const plusVal = i * 2;
+                        const rhs = coeff * xVal + plusVal;
+                        questions.push({
+                            question: `${coeff}x + ${plusVal} = ${rhs} olduğuna göre x kaçtır?`,
+                            options: [`a) ${xVal}`, `b) ${xVal + 3}`, `c) ${xVal - 2}`, `d) ${xVal * 2}`],
+                            correct: 0,
+                            explanation: `${plusVal} karşıya eksi geçer: ${coeff}x = ${rhs - plusVal}. İki taraf ${coeff}'e bölünür: x = ${xVal}.`
+                        });
+                    } else if (type === 4) { // Oran Orantı
+                        const k = i + 1;
+                        const v1 = 3 * k;
+                        const v2 = 8 * k;
+                        questions.push({
+                            question: `a/b = 3/8 orantısında a = ${v1} ise b kaçtır?`,
+                            options: [`a) ${v2}`, `b) ${v2 + 6}`, `c) ${v2 - 4}`, `d) ${v1 + 8}`],
+                            correct: 0,
+                            explanation: `3'ün ${k} katı ${v1} olduğuna göre, 8'in de ${k} katı alınır: 8 · ${k} = ${v2}.`
+                        });
+                    } else { // Yüzdeler
+                        const base = i * 40 + 100;
+                        const pct = 10 * mult;
+                        const ans = (base * pct) / 100;
+                        questions.push({
+                            question: `${base} sayısının %${pct}'si kaçtır?`,
+                            options: [`a) ${ans}`, `b) ${ans + 15}`, `c) ${ans - 10}`, `d) ${ans + 5}`],
+                            correct: 0,
+                            explanation: `${base} · (${pct}/100) = ${ans} bulunur.`
+                        });
+                    }
+                }
+            } else if (subject === 'turkce') {
+                const bank = [
+                    { q: 'Aşağıdaki cümlelerin hangisinde fiilde "anlam (zaman) kayması" vardır?', c: 'Yarım saat sonra otobüs kalkıyor.', w1: 'Dün akşam kitap okudum.', w2: 'Hafta sonları yürüyüş yaparım.', w3: 'Ödevlerini zamanında bitirmelisin.', ex: '"Yarım saat sonra" gelecek zamanı gösterdiği halde şimdiki zaman kipi (-iyor) kullanılmıştır.' },
+                    { q: 'Hangi seçenekteki fiil nesne alabilen "İş (Kılış)" fiilidir?', c: 'Taşımak', w1: 'Sararmak', w2: 'Uyumak', w3: 'Uzamak', ex: '"Onu taşıdı" diyebildiğimiz için nesne alabilen kılış fiilidir.' },
+                    { q: 'Öznenin kendi iradesiyle gerçekleşen ve nesne alamayan fiillere ne denir?', c: 'Durum Fiili', w1: 'Oluş Fiili', w2: 'İş Fiili', w3: 'Türemiş Fiil', ex: 'Öznenin içinde bulunduğu durumu gösteren ve nesne almayan fiiller durum fiilleridir.' },
+                    { q: 'Zamanla, doğada kendiliğinden gerçekleşen değişimi gösteren fiil hangisidir?', c: 'Paslanmak', w1: 'Gülmek', w2: 'Kırmak', w3: 'Açmak', ex: 'Paslanmak zamanla ve kendiliğinden gelişen bir oluş fiilidir.' },
+                    { q: '"Yarın hep birlikte sinemaya gideceğiz." cümlesindeki fiilin kipi ve şahsı nedir?', c: 'Gelecek Zaman - 1. Çoğul Şahıs', w1: 'Şimdiki Zaman - 1. Tekil Şahıs', w2: 'Geniş Zaman - 2. Çoğul Şahıs', w3: 'Görülen Geçmiş Zaman - 3. Tekil Şahıs', ex: '"Gideceğiz" fiili -ecek (Gelecek zaman) ve -iz (Biz - 1. Çoğul şahıs) eklerini almıştır.' },
+                    { q: 'Kalıplaşmış, yerleri değiştirilemeyen ve mecaz anlam taşıyan söz gruplarına ne ad verilir?', c: 'Deyim', w1: 'Atasözü', w2: 'Özdeyiş', w3: 'Terim', ex: 'Deyimler kalıplaşmış ve genellikle mecaz anlamlı söz gruplarıdır.' },
+                    { q: 'Aşağıdakilerden hangisi bir atasözüdür?', c: 'Ağaç yaşken eğilir.', w1: 'Göz kulak olmak', w2: 'İki ayağı bir pabuca girmek', w3: 'Etekleri zil çalmak', ex: '"Ağaç yaşken eğilir" öğüt veren bir atasözüdür, diğerleri deyimdir.' },
+                    { q: 'Kişisel görüş ve beğeni içeren cümlelere ne denir?', c: 'Öznel Cümle', w1: 'Nesnel Cümle', w2: 'Koşul Cümlesi', w3: 'Aşamalı Durum Cümlesi', ex: 'Kişisel duygu ve yorum içeren ifadeler öznel anlatımlıdır.' },
+                    { q: 'Aşağıdaki sözcüklerin hangisinde ünlü düşmesi vardır?', c: 'Aklı', w1: 'Defteri', w2: 'Kalemi', w3: 'Sırası', ex: 'Akıl-ı -> Aklı (ikinci hecedeki dar ünlü düşmüştür).' },
+                    { q: 'Aşağıdaki eklerden hangisi fiilden isim türeten yapım ekidir?', c: '-gi (Sev-gi)', w1: '-ler (Ev-ler)', w2: '-den (Okul-dan)', w3: '-in (Evin yolu)', ex: 'Sev- fiil köküne gelen -gi eki Sevgi ismini türetmiştir.' },
+                    { q: 'Hangi cümlede koyu yazılmış sözcük örtülü anlam taşımaktadır?', c: 'Bugün sınavda yine birinci oldu.', w1: 'Okula yürüyerek gitti.', w2: 'Saat tam yedide uyandı.', w3: 'Defterine notlar aldı.', ex: '"Yine" kelimesi daha önce de birinci olduğu anlamını doğrudan belirtmeden (örtülü olarak) verir.' },
+                    { q: 'Bir yazının ana fikrini destekleyen yardımcı düşünceler için aşağıdakilerden hangisi söylenebilir?', c: 'Ana fikri daha belirgin hale getirir.', w1: 'Metnin başlığıdır.', w2: 'Metindeki tek düşüncedir.', w3: 'Metnin özetidir.', ex: 'Yardımcı düşünceler ana fikri açıklamak ve desteklemek için kullanılır.' },
+                    { q: 'Hangi noktalama işareti tamamlanmamış cümlelerin sonuna konur?', c: 'Üç nokta (...)', w1: 'Nokta (.)', w2: 'Ünlem (!)', w3: 'Soru işareti (?)', ex: 'Tamamlanmamış (yüklemi bulunmayan) cümlelerin sonuna üç nokta konur.' },
+                    { q: 'Metinde olayların oluş sırasına göre dizilmesine ne ad verilir?', c: 'Kronolojik Sıralama', w1: 'Rastgele Sıralama', w2: 'Ters Sıralama', w3: 'Karma Sıralama', ex: 'Olayların zaman akışına göre sunulması kronolojik sıralamadır.' },
+                    { q: '"Korkmak" sözcüğünün zıt anlamlısı nedir?', c: 'Cesaret etmek / Güvenmek', w1: 'Ürkek olmak', w2: 'Çekinmek', w3: 'Endişelenmek', ex: 'Korkmak eyleminin karşıt durumu cesaret göstermektir.' },
+                    { q: 'Hangi bağlaç cümleye "karşılaştırmalı" anlam katar?', c: 'Oysa', w1: 'Çünkü', w2: 'Veya', w3: 'İle', ex: '"Oysa" düşüngenin yönünü değiştirerek karşılaştırma ve tezatlık kurar.' },
+                    { q: 'Hangi seçenekte yazım kuralı ihlali (yazım yanlışı) yapılmıştır?', c: 'Herşey yolunda gidiyor.', w1: 'Her şey yolunda gidiyor.', w2: 'Birkaç kişi geldi.', w3: 'Hiçbir zaman vazgeçmedi.', ex: '"Her şey" belgisiz zamiri her zaman ayrı yazılır.' },
+                    { q: 'Anlatıcının olayın içinde bizzat yer aldığı anlatıcı türü hangisidir?', c: '1. Tekil Şahıs Anlatıcı', w1: '3. Tekil Şahıs Anlatıcı', w2: 'İlahi Anlatıcı', w3: 'Gözlemci Anlatıcı', ex: '"Gittim, gördüm" gibi ifadeler 1. kişi ağzından anlatımdır.' },
+                    { q: 'Aşağıdakilerden hangisi bir eylem (fiil) cümlesidir?', c: 'Dün akşam hızlıca eve koştu.', w1: 'En sevdiği renk maviydi.', w2: 'Bu kitap çok güzelmiş.', w3: 'Oda oldukça genişti.', ex: 'Yüklemi "koşmak" fiili olduğu için fiil cümlesidir.' },
+                    { q: 'Fiillere gelen "-di / -du" eki hangi zaman ekidir?', c: 'Görülen (Bilinen) Geçmiş Zaman', w1: 'Öğrenilen Geçmiş Zaman', w2: 'Gelecek Zaman', w3: 'Geniş Zaman', ex: '-di/-du eki bilinen/görülen geçmiş zaman ekidir.' }
+                ];
+                for (let i = 0; i < count; i++) {
+                    const item = bank[i % bank.length];
+                    questions.push({
+                        question: `[Soru ${i + 1}] ${item.q}`,
+                        options: [`a) ${item.c}`, `b) ${item.w1}`, `c) ${item.w2}`, `d) ${item.w3}`],
+                        correct: 0,
+                        explanation: item.ex
+                    });
+                }
+            } else if (subject === 'fen') {
+                const bank = [
+                    { q: 'Uzayda gaz ve toz bulutlarının bir araya gelip sıkışmasıyla oluşan gök cismi hangisidir?', c: 'Bulutsu (Nebula)', w1: 'Kara Delik', w2: 'Göktaşı', w3: 'Gezegen', ex: 'Yıldızların doğum yeri olan gaz ve toz bulutlarına Bulutsu (Nebula) denir.' },
+                    { q: 'Hücrede enerji üretiminden sorumlu olan organel hangisidir?', c: 'Mitokondri', w1: 'Ribozom', w2: 'Kloroplast', w3: 'Koful', ex: 'Mitokondri hücresel solunum ile ATP enerjisi üretir.' },
+                    { q: 'Bitki hücresinde bulunup hayvan hücresinde bulunmayan yapı hangisidir?', c: 'Kloroplast ve Hücre Duvarı', w1: 'Mitokondri', w2: 'Çekirdek', w3: 'Ribozom', ex: 'Kloroplast ve hücre duvarı bitki hücresine özgüdür.' },
+                    { q: 'Vücut hücrelerinde gerçekleşen ve 2 yeni hücre oluşturan bölünme türü hangisidir?', c: 'Mitoz Bölünme', w1: 'Mayoz Bölünme', w2: 'Döllenme', w3: 'Yarılanma', ex: 'Mitoz bölünmede kromozom sayısı sabit kalır ve 2 genetik olarak özdeş hücre oluşur.' },
+                    { q: 'Üreme hücrelerinin oluşumunu sağlayan bölünme hangisidir?', c: 'Mayoz Bölünme', w1: 'Mitoz Bölünme', w2: 'Yenilenme', w3: 'Tomurcuklanma', ex: 'Mayoz bölünme kromozom sayısını yarıya indirerek sperm ve yumurtayı oluşturur.' },
+                    { q: 'Çekim potansiyel enerjisi hangi iki niceliğe bağlıdır?', c: 'Kütle ve Yükseklik', w1: 'Sadece Hız', w2: 'Yüzey Alanı', w3: 'Sıcaklık', ex: 'Ep = m·g·h formülünden bilindiği üzere kütle ve yüksekliğe bağlıdır.' },
+                    { q: 'Hareketli bir cismin sahip olduğu enerjiye ne denir?', c: 'Kinetik Enerji', w1: 'Potansiyel Enerji', w2: 'Isı Enerjisi', w3: 'Nükleer Enerji', ex: 'Hareket enerjisi kinetik enerjidir ve kütle ile sürate bağlıdır.' },
+                    { q: 'Atomun merkezinde yer alan çekirdekte hangi tanecikler bulunur?', c: 'Proton ve Nötron', w1: 'Elektron ve Proton', w2: 'Sadece Elektron', w3: 'Görünmez Dalgalar', ex: 'Çekirdekte (+) yüklü proton ve yüksüz nötron yer alır.' },
+                    { q: 'Işığın yoğunlukları farklı ortamlara geçerken doğrultu değiştirmesine ne denir?', c: 'Işığın Kırılması', w1: 'Işığın Yansıması', w2: 'Gölge Oluşumu', w3: 'Soğurulma', ex: 'Işık farklı ortamlara geçerken hızı ve yönü değişir (kırılma).' },
+                    { q: 'Dev düzgün görüntü elde etmek için makyaj ve dişçi aynalarında kullanılan ayna hangisidir?', c: 'Çukur Ayna', w1: 'Tümsek Ayna', w2: 'Düzlem Ayna', w3: 'Pürüzlü Ayna', ex: 'Çukur aynalar odağa yakın cisimleri büyük ve düz gösterir.' },
+                    { q: 'Elektronların çekirdek etrafındaki hareket ettiği bölgelere ne verilir?', c: 'Katman (Yörünge)', w1: 'Çekirdek', w2: 'Proton Yolu', w3: 'Boşluk', ex: 'Elektronlar çekirdek etrafındaki katmanlarda çok hızlı hareket eder.' },
+                    { q: 'Elementlerin sembollerle gösterilmesinin temel amacı nedir?', c: 'Bilimsel iletişimi kolaylaştırmak ve evrensellik sağlamak', w1: 'Sadece Türkçe isim koymak', w2: 'Gizlilik sağlamak', w3: 'Karmaşıklaştırmak', ex: 'Semboller tüm dünyada ortak bir bilim dili oluşturur.' },
+                    { q: 'Bileşikleri sembollerden ayıran en önemli gösterim şekli nedir?', c: 'Formüllerle gösterilmeleri (Örn: H2O)', w1: 'Tek harfle gösterilmeleri', w2: 'Rakam içermemeleri', w3: 'Renginin olması', ex: 'Bileşikler molekül yapısını gösteren formüllerle temsil edilir.' },
+                    { q: 'Kırılan ışığın normale yaklaşarak kırılması neyi gösterir?', c: 'Aşırı yoğun (çok yoğun) ortama geçtiğini', w1: 'Az yoğun ortama geçtiğini', w2: 'Işığın yok olduğunu', w3: 'Geri yansıdığını', ex: 'Işık az yoğundan çok yoğuna geçerken normale yaklaşarak yavaşlar.' },
+                    { q: 'Güneş enerjisini elektrik enerjisine dönüştüren panellere ne denir?', c: 'Güneş Paneli (Fotovoltaik Pil)', w1: 'Rüzgar Gülü', w2: 'Akü', w3: 'Jeneratör', ex: 'Güneş panelleri fotonları doğrudan elektrik akımına çevirir.' },
+                    { q: 'Hücre bölünmesinde kromozomların belirginleşip hücre ortasında dizildiği evre hangisidir?', c: 'Metafaz', w1: 'Profaz', w2: 'Anafaz', w3: 'Telofaz', ex: 'Kromozomlar en net metafaz evresinde hücresel ekvatorda dizilir.' },
+                    { q: 'Mayoz bölünmede genetik çeşitliliği sağlayan olay hangisidir?', c: 'Parça Değişimi (Crossover)', w1: 'Kromozomların eşit bölünmesi', w2: 'DNA replikasyonu', w3: 'Çekirdek zarının erimesi', ex: 'Homolog kromozomlar arasındaki parça değişimi çeşitlilik sağlar.' },
+                    { q: 'Aşağıdakilerden hangisi bir geri dönüşüm maddesi olamaz?', c: 'Yemek artıkları (Kompost hariç geri dönüştürülemez evsel atık)', w1: 'Cam şişe', w2: 'Plastik kap', w3: 'Kağıt gazete', ex: 'Plastik, cam ve kağıt ambalajlar geri dönüştürülebilir sanayi hammaddeleridir.' },
+                    { q: 'Koyu renkli yüzeylerin ışığı beyaz yüzeylere göre daha fazla emmesine ne denir?', c: 'Işığın Soğurulması', w1: 'Işığın Yansıması', w2: 'Işığın Kırılması', w3: 'Tam Yansıma', ex: 'Koyu renkler ışık enerjisini emer (soğurur) ve ısınır.' },
+                    { q: 'Göz kusurlarından olan ve uzağı net görememe durumu olan Miyopluk hangi mercekle düzeltilir?', c: 'Kalın Kenarlı Mercek', w1: 'İnce Kenarlı Mercek', w2: 'Çukur Ayna', w3: 'Düzlem Ayna', ex: 'Miyop göz kusuru kalın kenarlı (ıraksak) mercekle düzeltilir.' }
+                ];
+                for (let i = 0; i < count; i++) {
+                    const item = bank[i % bank.length];
+                    questions.push({
+                        question: `[Soru ${i + 1}] ${item.q}`,
+                        options: [`a) ${item.c}`, `b) ${item.w1}`, `c) ${item.w2}`, `d) ${item.w3}`],
+                        correct: 0,
+                        explanation: item.ex
+                    });
+                }
+            } else if (subject === 'sosyal') {
+                const bank = [
+                    { q: 'Osmanlı Devleti\'nin fethettiği Balkan topraklarına Anadolu\'dan Türk aileleri yerleştirme politikası nedir?', c: 'İskân Politikası', w1: 'Devşirme Sistemi', w2: 'Tımar Sistemi', w3: 'İstimalet Politikası', ex: 'İskân politikası ile bölgede kalıcılık sağlanmıştır.' },
+                    { q: 'İletişimde "Sen Dili" yerine "Ben Dili" kullanmanın faydası nedir?', c: 'Karşı tarafı suçlamadan duygu ve düşünceleri paylaşmayı sağlar.', w1: 'Tartışmayı sertleştirir.', w2: 'Karşı tarafı yargılamaya yarar.', w3: 'İletişimi tamamen bitirir.', ex: 'Ben dili olumlu iletişimi ve empatiyi artırır.' },
+                    { q: 'Lale Devri\'nde Avrupa\'yı yakından tanımak amacıyla açılan elçiliklere ne ad verilir?', c: 'Geçici Elçilikler', w1: 'Daimi Elçilikler', w2: 'Konsolosluk', w3: 'Rasathane', ex: '28 Çelebi Mehmet Efendi Paris\'e geçici elçi olarak gönderilmiştir.' },
+                    { q: 'Dünyanın yuvarlak olduğunu ispatlayan ilk deniz aşırı seyahati kim başlatmıştır?', c: 'Macellan', w1: 'Kristof Kolomb', w2: 'Vasko dö Gama', w3: 'Marco Polo', ex: 'Macellan\'ın başladığı turu Del Kano tamamlamış ve dünya turu tamamlanmıştır.' },
+                    { q: 'Osmanlı\'da hoşgörü ve adaletli yönetim anlayışına verilen isim nedir?', c: 'İstimalet Politikası', w1: 'İskân Politikası', w2: 'Tımar Düzeni', w3: 'Devşirme Kanunu', ex: 'İstimalet kelimesi fethedilen halka hoşgörülü davranma politikasıdır.' },
+                    { q: 'Ülkemizde nüfusun dağılışını etkileyen doğal faktörlerden biri hangisidir?', c: 'İklim ve Yeryüzü Şekilleri', w1: 'Sanayileşme', w2: 'Ulaşım Ağı', w3: 'Maden Ocakları', ex: 'İklim ve yer şekilleri doğanın sunduğu fiziki etkenlerdir.' },
+                    { q: 'Osmanlı Devleti\'nde orduya asker yetiştiren ve toprağın işlenmesini sağlayan sistem hangisidir?', c: 'Tımar Sistemi', w1: 'Devşirme Sistemi', w2: 'Enderun', w3: 'Lonca Teşkilatı', ex: 'Tımar sistemi eyalet ordusu besler ve üretimin devamlılığını sağlar.' },
+                    { q: 'Matbaanın Osmanlı Devleti\'ne İbrahim Müteferrika tarafından getirilmesi hangi döneme denk gelir?', c: 'Lale Devri', w1: 'Tanzimat Dönemi', w2: 'Kuruluş Dönemi', w3: 'Meşrutiyet Dönemi', ex: 'İlk özel Türk matbaası Lale Devri\'nde kurulmuştur.' },
+                    { q: 'Kitle iletişim araçlarının kamuoyu oluşturmadaki en büyük etkisi nedir?', c: 'Geniş kitlelere kısa sürede bilgi ulaştırmak', w1: 'Sadece haberleri engellemek', w2: 'Sadece gazete satmak', w3: 'Bireysel iletişimi yok etmek', ex: 'Medya kitleleri hızlı bilgilendirir ve kamuoyu yönlendirir.' },
+                    { q: 'Anayasamızda yer alan "Yerleşme ve Seyahat Özgürlüğü" hangi durumlarda kısıtlanabilir?', c: 'Salgın hastalık, suç işlenmesini önleme ve kamu düzeni', w1: 'Keyfi durumlarda', w2: 'Her hafta sonu', w3: 'Ekonomik krizlerde', ex: 'Kamu sağlığı ve güvenliği için kanunla kısıtlanabilir.' }
+                ];
+                for (let i = 0; i < count; i++) {
+                    const item = bank[i % bank.length];
+                    questions.push({
+                        question: `[Soru ${i + 1}] ${item.q}`,
+                        options: [`a) ${item.c}`, `b) ${item.w1}`, `c) ${item.w2}`, `d) ${item.w3}`],
+                        correct: 0,
+                        explanation: item.ex
+                    });
+                }
+            } else if (subject === 'ingilizce') {
+                const bank = [
+                    { q: 'Which sentence describes physical "Appearance"?', c: 'He has got short wavy hair and green eyes.', w1: 'She is very generous.', w2: 'He likes reading books.', w3: 'They are hardworking.', ex: 'Hair type and eye color describe physical appearance.' },
+                    { q: 'Which word means "always telling the truth"?', c: 'Honest', w1: 'Stubborn', w2: 'Punctual', w3: 'Clumsy', ex: 'Honest means telling the truth.' },
+                    { q: 'Complete: "Wild animals should live in their natural ______."', c: 'habitat', w1: 'cage', w2: 'house', w3: 'city', ex: 'Natural habitat is the environment where animals live in nature.' },
+                    { q: 'Which animal is an "Endangered Species"?', c: 'Panda', w1: 'Cat', w2: 'Dog', w3: 'Chicken', ex: 'Pandas are protected endangered species.' },
+                    { q: 'Choose the correct opposite: "Generous" x ______', c: 'Stingy', w1: 'Kind', w2: 'Polite', w3: 'Punctual', ex: 'Stingy is the opposite of generous.' },
+                    { q: 'What should we do to protect wild animals?', c: 'We should protect their natural habitats.', w1: 'We should hunt them.', w2: 'We should cut down trees.', w3: 'We should pollute rivers.', ex: 'Protecting habitats keeps wildlife safe.' },
+                    { q: 'Which frequency adverb means "100% of the time"?', c: 'Always', w1: 'Never', w2: 'Sometimes', w3: 'Rarely', ex: 'Always signifies 100% frequency.' },
+                    { q: 'Complete: "She is very ______; she always comes to class on time."', c: 'punctual', w1: 'clumsy', w2: 'lazy', w3: 'selfish', ex: 'Punctual means doing things at the exact time.' },
+                    { q: 'Which one is a "Biomedical / Sports Equipment"?', c: 'Racket', w1: 'Tiger', w2: 'Forest', w3: 'Dessert', ex: 'Racket is used in tennis/badminton.' },
+                    { q: 'Choose the correct comparative: "Basketball is ______ than badminton in Turkey."', c: 'more popular', w1: 'popularer', w2: 'most popular', w3: 'as popular', ex: 'Multi-syllable adjectives take "more" in comparative form.' }
+                ];
+                for (let i = 0; i < count; i++) {
+                    const item = bank[i % bank.length];
+                    questions.push({
+                        question: `[Question ${i + 1}] ${item.q}`,
+                        options: [`a) ${item.c}`, `b) ${item.w1}`, `c) ${item.w2}`, `d) ${item.w3}`],
+                        correct: 0,
+                        explanation: item.ex
+                    });
+                }
+            } else { // Din Kültürü
+                const bank = [
+                    { q: 'Gözle görülmeyen, nurdan yaratılmış ve günahsız olan varlıklar hangisidir?', c: 'Melekler', w1: 'İnsanlar', w2: 'Hayvanlar', w3: 'Bitkiler', ex: 'Melekler nurdan yaratılmış günahsız varlıklardır.' },
+                    { q: 'Peygamberlere vahiy getirmekle görevli melek hangisidir?', c: 'Cebrail (a.s.)', w1: 'Mikail (a.s.)', w2: 'İsrafil (a.s.)', w3: 'Azrail (a.s.)', ex: 'Cebrail vahiy meleğidir.' },
+                    { q: 'Kıyamet günü SUR borusuna üfleyecek melek hangisidir?', c: 'İsrafil (a.s.)', w1: 'Azrail (a.s.)', w2: 'Mikail (a.s.)', w3: 'Kiramen Katibin', ex: 'İsrafil sur borusunu üflemekle görevlidir.' },
+                    { q: 'Hac ibadetinde Kâbe\'nin etrafında 7 defa dönmeye ne verilir?', c: 'Tavaf', w1: 'Sa\'y', w2: 'Vakfe', w3: 'İhram', ex: 'Kâbe etrafındaki 7 dönüşe tavaf denir.' },
+                    { q: 'Safa ile Merve tepeleri arasında 7 kez gidip gelmeye ne ad verilir?', c: 'Sa\'y', w1: 'Tavaf', w2: 'Vakfe', w3: 'İhram', ex: 'Hz. Hacer\'in su arayışını sembolize eden yürüyüş Sa\'y ibadetidir.' },
+                    { q: 'Arafat bölgesinde bir süre durup dua etme ibadetine ne denir?', c: 'Vakfe', w1: 'Tavaf', w2: 'Sa\'y', w3: 'Şavt', ex: 'Haccın farzlarından biri de Arafat Vakfesidir.' },
+                    { q: 'Hac ve umre yaparken erkeklerin giydiği dikişsiz beyaz örtüye ne denir?', c: 'İhram', w1: 'Kefen', w2: 'Cübbe', w3: 'Sarıklı giysi', ex: 'İhram dikişsiz özel hac kıyafetidir.' },
+                    { q: 'İnsanın sağında ve solunda bulunup sevap ile günahları yazan meleklere ne denir?', c: 'Kiramen Kâtibin', w1: 'Münker-Nekir', w2: 'Hafaza Melekleri', w3: 'Rıdvan', ex: 'Kiramen Katibin amel defterini tutan yazıcı meleklerdir.' },
+                    { q: 'Kabirde insanları sorgulamakla görevli melekler hangileridir?', c: 'Münker ve Nekir', w1: 'Cebrail ve Mikail', w2: 'İsrafil ve Azrail', w3: 'Kiramen Katibin', ex: 'Münker ve Nekir kabir sorgu melekleridir.' },
+                    { q: 'Peygamberimiz Hz. Muhammed\'in (s.a.v.) güzel ahlakı ve merhameti için hangisi söylenebilir?', c: 'Tüm insanlığa rahmet ve örnek olarak gönderilmiştir.', w1: 'Sadece kendi kabilesine gönderilmiştir.', w2: 'Sadece sert kurallar koymuştur.', w3: 'İnsanlarla iletişim kurmamıştır.', ex: 'O alemlere rahmet olarak gönderilmiş en güzel örnektir.' }
+                ];
+                for (let i = 0; i < count; i++) {
+                    const item = bank[i % bank.length];
+                    questions.push({
+                        question: `[Soru ${i + 1}] ${item.q}`,
+                        options: [`a) ${item.c}`, `b) ${item.w1}`, `c) ${item.w2}`, `d) ${item.w3}`],
+                        correct: 0,
+                        explanation: item.ex
+                    });
+                }
+            }
+
+            // Shuffle options for each question so answers are not always option 'a'
+            questions.forEach(q => {
+                const correctText = q.options[q.correct];
+                // Shuffle array
+                for (let i = q.options.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [q.options[i], q.options[j]] = [q.options[j], q.options[i]];
+                }
+                // Find new correct index
+                q.correct = q.options.indexOf(correctText);
+            });
+
+            return questions;
+        }
+
+        const QUIZ_DATA = {
+            turkce: {
+                title: 'Türkçe Sınavı (20 Soru)',
+                icon: 'fa-book-open',
+                color: 'bg-rose-500',
+                textColor: 'text-rose-500',
+                defaultQuestionsCount: 20
+            },
+            matematik: {
+                title: 'Matematik Sınavı (20 Soru)',
+                icon: 'fa-calculator',
+                color: 'bg-teal-500',
+                textColor: 'text-teal-500',
+                defaultQuestionsCount: 20
+            },
+            fen: {
+                title: 'Fen Bilimleri Sınavı (20 Soru)',
+                icon: 'fa-flask',
+                color: 'bg-sky-500',
+                textColor: 'text-sky-500',
+                defaultQuestionsCount: 20
+            },
+            sosyal: {
+                title: 'Sosyal Bilgiler Sınavı (10 Soru)',
+                icon: 'fa-earth-americas',
+                color: 'bg-orange-500',
+                textColor: 'text-orange-500',
+                defaultQuestionsCount: 10
+            },
+            ingilizce: {
+                title: 'İngilizce Sınavı (10 Soru)',
+                icon: 'fa-language',
+                color: 'bg-purple-500',
+                textColor: 'text-purple-500',
+                defaultQuestionsCount: 10
+            },
+            din: {
+                title: 'Din Kültürü Sınavı (10 Soru)',
+                icon: 'fa-mosque',
+                color: 'bg-emerald-500',
+                textColor: 'text-emerald-500',
+                defaultQuestionsCount: 10
+            }
+        };
+
+        // App State
+        let state = {
+            selectedSubjectKey: 'turkce',
+            selectedDifficulty: 'orta',
+            isTimerActive: true,
+            currentQuestionIndex: 0,
+            activeQuestions: [],
+            userAnswers: [],
+            timeElapsed: 0,
+            timerInterval: null,
+            soundEnabled: true,
+            darkMode: false
+        };
+
+        window.onload = function() {
+            renderSubjectsGrid();
+        };
+
+        function renderSubjectsGrid() {
+            const grid = document.getElementById('subjectsGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            Object.keys(QUIZ_DATA).forEach((key) => {
+                const sub = QUIZ_DATA[key];
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-lg border border-slate-100 dark:border-slate-700/60 hover:shadow-xl transition-all duration-300 flex flex-col justify-between";
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-4 mb-5">
+                        <div class="${sub.color} w-14 h-14 rounded-2xl flex items-center justify-center text-white text-3xl shadow-md">
+                            <i class="fa-solid ${sub.icon}"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-extrabold text-xl text-slate-800 dark:text-slate-100">${sub.title}</h4>
+                            <span class="text-xs font-semibold text-slate-400 dark:text-slate-500">7. Sınıf • MEB Müfredatına Uygun Tek Sınav</span>
+                        </div>
+                    </div>
+                    <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60">
+                        <button onclick="startQuiz('${key}')" class="w-full py-3 rounded-2xl font-bold text-sm bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-play"></i> Sınava Başla (${sub.defaultQuestionsCount} Soru)
+                        </button>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function setDifficulty(diff) {
+            AudioFX.playClick();
+            state.selectedDifficulty = diff;
+            const diffBtns = ['Kolay', 'Orta', 'Zor', 'CokZor'];
+            const diffKeys = ['kolay', 'orta', 'zor', 'cokzor'];
+
+            diffKeys.forEach((key, idx) => {
+                const btn = document.getElementById(`btnDiff${diffBtns[idx]}`);
+                if (btn) {
+                    if (key === diff) {
+                        btn.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition-all bg-indigo-600 text-white shadow-sm";
+                    } else {
+                        btn.className = "px-2.5 py-1 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-all";
+                    }
+                }
+            });
+        }
+
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            if (icon) {
+                if (state.soundEnabled) {
+                    icon.className = "fa-solid fa-volume-high text-lg";
+                } else {
+                    icon.className = "fa-solid fa-volume-xmark text-lg text-rose-500";
+                }
+            }
+        }
+
+        function toggleDarkMode() {
+            state.darkMode = !state.darkMode;
+            const icon = document.getElementById('themeIcon');
+            if (state.darkMode) {
+                document.documentElement.classList.add('dark');
+                if (icon) icon.className = "fa-solid fa-sun text-lg text-amber-400";
+            } else {
+                document.documentElement.classList.remove('dark');
+                if (icon) icon.className = "fa-solid fa-moon text-lg";
+            }
+        }
+
+        function navToDashboard() {
+            stopTimer();
+            AudioFX.playClick();
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultsView').classList.add('hidden');
+            document.getElementById('dashboardView').classList.remove('hidden');
+            renderSubjectsGrid();
+        }
+
+        function startQuiz(subjectKey) {
+            AudioFX.playClick();
+            state.selectedSubjectKey = subjectKey;
+            state.currentQuestionIndex = 0;
+            state.timeElapsed = 0;
+            
+            const count = QUIZ_DATA[subjectKey].defaultQuestionsCount;
+            // Generate distinct non-repeating questions
+            state.activeQuestions = generateUniqueQuestions(subjectKey, state.selectedDifficulty, count);
+            state.userAnswers = new Array(count).fill(null);
+
+            state.isTimerActive = document.getElementById('timerToggle').checked;
+            const timerContainer = document.getElementById('timerContainer');
+            if (state.isTimerActive) {
+                timerContainer.classList.remove('hidden');
+                startTimer();
+            } else {
+                timerContainer.classList.add('hidden');
+            }
+
+            const subject = QUIZ_DATA[subjectKey];
+            document.getElementById('quizSubjectTitle').innerText = `${subject.title}`;
+            const iconContainer = document.getElementById('quizSubjectIcon');
+            iconContainer.className = `w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md ${subject.color}`;
+            iconContainer.innerHTML = `<i class="fa-solid ${subject.icon}"></i>`;
+
+            document.getElementById('dashboardView').classList.add('hidden');
+            document.getElementById('resultsView').classList.add('hidden');
+            document.getElementById('quizView').classList.remove('hidden');
+
+            renderCurrentQuestion();
+        }
+
+        function renderCurrentQuestion() {
+            const questionObj = state.activeQuestions[state.currentQuestionIndex];
+            const totalQuestions = state.activeQuestions.length;
+
+            document.getElementById('quizQuestionCounter').innerText = `Soru ${state.currentQuestionIndex + 1} / ${totalQuestions}`;
+            const progressPercent = ((state.currentQuestionIndex + 1) / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = `${progressPercent}%`;
+
+            const diffNames = { kolay: 'Kolay', orta: 'Orta', zor: 'Zor (LGS)', cokzor: 'Derece' };
+            document.getElementById('questionCategoryTag').innerText = `7. Sınıf ${QUIZ_DATA[state.selectedSubjectKey].title} • Zorluk: ${diffNames[state.selectedDifficulty]}`;
+            document.getElementById('questionText').innerText = questionObj.question;
+
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+
+            const currentUserChoice = state.userAnswers[state.currentQuestionIndex];
+
+            questionObj.options.forEach((optText, optIdx) => {
+                const optBtn = document.createElement('button');
+                
+                let btnClasses = "w-full text-left p-4 rounded-2xl border-2 font-semibold text-sm sm:text-base transition-all flex items-center justify-between group shadow-sm ";
+
+                if (currentUserChoice === null) {
+                    btnClasses += "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200";
+                    optBtn.onclick = () => selectOption(optIdx);
+                } else {
+                    if (optIdx === questionObj.correct) {
+                        btnClasses += "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200 font-bold";
+                    } else if (currentUserChoice === optIdx && optIdx !== questionObj.correct) {
+                        btnClasses += "border-rose-500 bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-200 font-bold";
+                    } else {
+                        btnClasses += "border-slate-200 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/40 text-slate-400 opacity-60";
+                    }
+                    optBtn.disabled = true;
+                }
+
+                optBtn.className = btnClasses;
+                
+                let iconHtml = `<div class="w-7 h-7 rounded-full border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center text-xs font-bold text-slate-500 dark:text-slate-400 group-hover:border-indigo-500 group-hover:text-indigo-500 transition-colors">${String.fromCharCode(65 + optIdx)}</div>`;
+                
+                if (currentUserChoice !== null) {
+                    if (optIdx === questionObj.correct) {
+                        iconHtml = `<div class="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs shadow-md"><i class="fa-solid fa-check"></i></div>`;
+                    } else if (currentUserChoice === optIdx) {
+                        iconHtml = `<div class="w-7 h-7 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs shadow-md"><i class="fa-solid fa-xmark"></i></div>`;
+                    }
+                }
+
+                optBtn.innerHTML = `
+                    <span class="pr-3">${optText}</span>
+                    ${iconHtml}
+                `;
+
+                container.appendChild(optBtn);
+            });
+
+            // Feedback Banner
+            const feedbackBanner = document.getElementById('feedbackBanner');
+            if (currentUserChoice !== null) {
+                feedbackBanner.classList.remove('hidden');
+                const isCorrect = currentUserChoice === questionObj.correct;
+                
+                if (isCorrect) {
+                    feedbackBanner.className = "rounded-2xl p-4 flex items-center justify-between bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200 bounce-in";
+                    document.getElementById('feedbackIcon').className = "fa-solid fa-circle-check text-emerald-500 text-2xl";
+                    document.getElementById('feedbackTitle').innerText = "Tebrikler! Doğru Cevap 👏";
+                    document.getElementById('feedbackDetail').innerText = `Çözüm & Açıklama: ${questionObj.explanation}`;
+                } else {
+                    feedbackBanner.className = "rounded-2xl p-4 flex items-center justify-between bg-rose-100 dark:bg-rose-950/60 border border-rose-300 dark:border-rose-700 text-rose-800 dark:text-rose-200 bounce-in";
+                    document.getElementById('feedbackIcon').className = "fa-solid fa-circle-xmark text-rose-500 text-2xl";
+                    document.getElementById('feedbackTitle').innerText = "Yanlış Cevap!";
+                    document.getElementById('feedbackDetail').innerText = `Doğru Şık: (${String.fromCharCode(65 + questionObj.correct)}). Mantık/Çözüm: ${questionObj.explanation}`;
+                }
+            } else {
+                feedbackBanner.classList.add('hidden');
+            }
+
+            updateLiveScore();
+
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtnText = document.getElementById('nextBtnText');
+
+            prevBtn.disabled = state.currentQuestionIndex === 0;
+
+            if (state.currentQuestionIndex === totalQuestions - 1) {
+                nextBtnText.innerText = "Sınavı Bitir";
+            } else {
+                nextBtnText.innerText = "Sonraki";
+            }
+        }
+
+        function selectOption(optionIndex) {
+            if (state.userAnswers[state.currentQuestionIndex] !== null) return;
+
+            state.userAnswers[state.currentQuestionIndex] = optionIndex;
+            const currentQ = state.activeQuestions[state.currentQuestionIndex];
+
+            if (optionIndex === currentQ.correct) {
+                AudioFX.playCorrect();
+            } else {
+                AudioFX.playWrong();
+            }
+
+            renderCurrentQuestion();
+        }
+
+        function updateLiveScore() {
+            let correctCount = 0;
+            state.userAnswers.forEach((ans, idx) => {
+                if (ans !== null && ans === state.activeQuestions[idx].correct) {
+                    correctCount++;
+                }
+            });
+
+            const pointsPerQ = 100 / state.activeQuestions.length;
+            const currentScore = Math.round(correctCount * pointsPerQ);
+            document.getElementById('liveScoreDisplay').innerText = `${currentScore} Puan`;
+        }
+
+        function nextQuestion() {
+            AudioFX.playClick();
+            if (state.currentQuestionIndex < state.activeQuestions.length - 1) {
+                state.currentQuestionIndex++;
+                renderCurrentQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function prevQuestion() {
+            AudioFX.playClick();
+            if (state.currentQuestionIndex > 0) {
+                state.currentQuestionIndex--;
+                renderCurrentQuestion();
+            }
+        }
+
+        function confirmExitQuiz() {
+            if (confirm("Sınavdan çıkmak istediğinize emin misiniz? İlerlemeniz kaybolacaktır.")) {
+                navToDashboard();
+            }
+        }
+
+        function startTimer() {
+            stopTimer();
+            state.timeElapsed = 0;
+            updateTimerDisplay();
+            state.timerInterval = setInterval(() => {
+                state.timeElapsed++;
+                updateTimerDisplay();
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+                state.timerInterval = null;
+            }
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(state.timeElapsed / 60).toString().padStart(2, '0');
+            const secs = (state.timeElapsed % 60).toString().padStart(2, '0');
+            document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
+        }
+
+        function finishQuiz() {
+            stopTimer();
+            AudioFX.playClick();
+
+            let correctCount = 0;
+            let wrongCount = 0;
+            let emptyCount = 0;
+
+            state.userAnswers.forEach((ans, idx) => {
+                if (ans === null) {
+                    emptyCount++;
+                } else if (ans === state.activeQuestions[idx].correct) {
+                    correctCount++;
+                } else {
+                    wrongCount++;
+                }
+            });
+
+            const totalQ = state.activeQuestions.length;
+            const finalScore = Math.round((correctCount / totalQ) * 100);
+
+            document.getElementById('finalScoreDisplay').innerText = finalScore;
+            document.getElementById('resCorrect').innerText = correctCount;
+            document.getElementById('resWrong').innerText = wrongCount;
+            document.getElementById('resEmpty').innerText = emptyCount;
+
+            const mins = Math.floor(state.timeElapsed / 60).toString().padStart(2, '0');
+            const secs = (state.timeElapsed % 60).toString().padStart(2, '0');
+            document.getElementById('resTime').innerText = state.isTimerActive ? `${mins}:${secs}` : 'Devre Dışı';
+
+            const starContainer = document.getElementById('starRating');
+            starContainer.innerHTML = '';
+            let starsCount = 1;
+            if (finalScore >= 90) starsCount = 5;
+            else if (finalScore >= 70) starsCount = 4;
+            else if (finalScore >= 50) starsCount = 3;
+            else if (finalScore >= 30) starsCount = 2;
+
+            for (let i = 0; i < 5; i++) {
+                if (i < starsCount) {
+                    starContainer.innerHTML += `<i class="fa-solid fa-star text-amber-400"></i>`;
+                } else {
+                    starContainer.innerHTML += `<i class="fa-regular fa-star text-slate-300 dark:text-slate-600"></i>`;
+                }
+            }
+
+            if (finalScore >= 70 && typeof confetti === 'function') {
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            }
+
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultsView').classList.remove('hidden');
+        }
+
+        function retakeQuiz() {
+            startQuiz(state.selectedSubjectKey);
+        }
+
+        function toggleReviewModal() {
+            AudioFX.playClick();
+            const modal = document.getElementById('reviewModal');
+            if (modal.classList.contains('hidden')) {
+                renderReviewList();
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function renderReviewList() {
+            const container = document.getElementById('reviewListContainer');
+            container.innerHTML = '';
+
+            state.activeQuestions.forEach((q, idx) => {
+                const userChoice = state.userAnswers[idx];
+                const isCorrect = userChoice === q.correct;
+                const isEmpty = userChoice === null;
+
+                const card = document.createElement('div');
+                card.className = "p-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 space-y-3";
+
+                let badgeHtml = '';
+                if (isEmpty) {
+                    badgeHtml = `<span class="bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 text-xs font-bold px-2.5 py-1 rounded-md">Boş Bırakıldı</span>`;
+                } else if (isCorrect) {
+                    badgeHtml = `<span class="bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-xs font-bold px-2.5 py-1 rounded-md">Doğru</span>`;
+                } else {
+                    badgeHtml = `<span class="bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 text-xs font-bold px-2.5 py-1 rounded-md">Yanlış</span>`;
+                }
+
+                let optionsListHtml = '';
+                q.options.forEach((opt, oIdx) => {
+                    let optStyle = "text-slate-600 dark:text-slate-400";
+                    if (oIdx === q.correct) {
+                        optStyle = "text-emerald-600 dark:text-emerald-400 font-bold";
+                    } else if (oIdx === userChoice && !isCorrect) {
+                        optStyle = "text-rose-600 dark:text-rose-400 font-bold line-through";
+                    }
+
+                    optionsListHtml += `<li class="text-sm ${optStyle}">${opt}</li>`;
+                });
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="font-bold text-sm text-slate-800 dark:text-slate-200">Soru ${idx + 1}</span>
+                        ${badgeHtml}
+                    </div>
+                    <p class="font-semibold text-sm sm:text-base text-slate-800 dark:text-slate-100">${q.question}</p>
+                    <ul class="space-y-1 pl-2 border-l-2 border-slate-200 dark:border-slate-700 my-2">
+                        ${optionsListHtml}
+                    </ul>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700">
+                        💡 <strong>Çözüm & Açıklama:</strong> ${q.explanation}
+                    </p>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
